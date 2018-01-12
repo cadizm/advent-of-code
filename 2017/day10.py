@@ -161,19 +161,6 @@ print part1()
 # Knot Hash of your puzzle input? Ignore any leading or trailing whitespace
 # you might encounter.
 
-def circular_reverse(L, index, length):
-    N = len(L)
-
-    if index + length <= len(L):
-        M = L[index:index + length]
-    else:
-        M = L[index:] + L[:(index + length) % N]
-
-    for i, v in enumerate(reversed(M)):
-        L[(index + i) % N] = v
-
-    return L
-
 
 def knot_hash_round(L, lengths, pos, skip):
     for v in lengths:
