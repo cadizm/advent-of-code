@@ -16,9 +16,12 @@ all: $(TARGETS)
 %.o: %.cc
 
 clean:
-	@rm -f $(TARGETS) $(OBJ)
+	@rm -f $(TARGETS) $(OBJ) data/*.clean
 
 lint:
 	@cpplint.py $(wildcard *.h) $(SRC)
+
+input:
+	$(MAKE) -C data
 
 .PHONY: all clean lint
