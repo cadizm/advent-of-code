@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <vector>
 
 // --- Day 3: No Matter How You Slice It ---
 // The Elves managed to locate the chimney-squeeze prototype fabric for
@@ -65,9 +66,8 @@
 // (1,5) (2,5) (3,5) (4,5)
 // (1,6) (2,6) (3,6) (4,6)
 
-
 int part1() {
-  std::ifstream f("data/day03.input.clean");
+  std::ifstream f("data/day03.input.part1");
 
   std::map<std::pair<int, int>, int> map;
   int left, top, width, height;
@@ -96,8 +96,72 @@ int part1() {
   return count;
 }
 
+// --- Part Two ---
+// Amidst the chaos, you notice that exactly one claim doesn't overlap by even
+// a single square inch of fabric with any other claim. If you can somehow
+// draw attention to it, maybe the Elves will be able to make Santa's suit
+// after all!
+//
+// For example, in the claims above, only claim 3 is intact after all claims
+// are made.
+//
+// What is the ID of the only claim that doesn't overlap?
+
+int part2() {
+  std::ifstream f("data/day03.input.part2");
+
+  // (left, top) -> overlap count
+  std::map<std::pair<int, int>, int> pos_count;
+
+  // claim -> list of (left, top)
+  std::map<int, std::vector<std::pair<int, int>>> claim_positions;
+
+  // read input and map:
+  //   1. position to overlap count
+  //   2. claim to list of positions
+  int claim, left, top, width, height;
+  while (f >> claim >> left >> top >> width >> height) {
+    claim_positions[claim] = std::vector<std::pair<int, int>>();
+
+    for (int i = 0; i < height; ++i) {
+      for (int j = 0; j < width; ++j) {
+        auto key = std::make_pair(left + j, top + i);
+        claim_positions[claim].push_back(key);
+
+        if (pos_count.find(key) != pos_count.end()) {
+          pos_count[key] += 1;
+        } else {
+          pos_count[key] = 1;
+        }
+      }
+    }
+  }
+
+  // for each claim and its list of positions, find claim that
+  // has overlap count of 1 for each position.
+  for (auto kv : claim_positions) {
+    int claim = kv.first;
+    std::vector<std::pair<int, int>> pos_list = kv.second;
+
+    bool intact = true;
+    for (std::pair<int, int> pos : pos_list) {
+      if (pos_count.find(pos) != pos_count.end() && pos_count[pos] > 1) {
+        intact = false;
+        break;
+      }
+    }
+    if (intact) {
+      return claim;
+    }
+  }
+
+  throw("No intact claim found.");
+}
+
+
 int main() {
   std::cout << part1() << std::endl;
+  std::cout << part2() << std::endl;
 
   return 0;
 }

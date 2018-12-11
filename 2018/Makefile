@@ -16,7 +16,7 @@ all: $(TARGETS)
 %.o: %.cc
 
 clean:
-	@rm -f $(TARGETS) $(OBJ) data/*.clean
+	@rm -f $(TARGETS) $(OBJ) data/*.part*
 
 lint:
 	@cpplint.py $(wildcard *.h) $(SRC)
